@@ -2,6 +2,21 @@
 This project is a Telegram video sharing bot designed to manage video content between private and public channels, integrating an advertisement system. Its core purpose is to process videos uploaded to a private channel, display video thumbnails with original captions to users in a public channel, and deliver the full video after users watch advertisements. The bot preserves all caption formatting (bold, italic, links, etc.) and manages automatic message cleanup. The bot aims to provide a robust and scalable solution for content distribution with monetization capabilities.
 
 # Recent Changes
+## November 11, 2025 - Replit Import & Ad System Update
+- **Replit Environment Setup**: Configured project to run in Replit environment
+  - Installed all required Python dependencies (bcrypt, psycopg2-binary, gunicorn, Flask, etc.)
+  - Configured Flask workflow to run on port 5000 with host 0.0.0.0 for proper web preview
+  - Set up deployment configuration using Gunicorn with VM target for webhook support
+  - Created .gitignore for Python project
+  - PostgreSQL database auto-configured via Replit's DATABASE_URL
+- **Ad System Migration**: Switched from Monetag rewarded interstitial ads to rewarded popup ads
+  - Updated static/ad.html to use `show_XXX({ type: 'pop' })` for popup-based ads
+  - Implemented button-triggered ad flow: user clicks → popup opens externally → 15s verification → video delivery
+  - Added countdown timer with proper reset on retry attempts
+  - Improved UX with loading states, status messages, and visual feedback
+  - Maintained tracking with `ymid` parameter for user identification
+  - Added graceful fallback handling for ad SDK failures
+
 ## November 5, 2025 - Revenue Protection Fix
 - **CRITICAL FIX**: Bot now properly sends ONLY thumbnail images to public channel (not full videos)
 - Downloads and re-uploads thumbnails as photos to bypass Telegram's thumbnail file_id restriction

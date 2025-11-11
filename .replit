@@ -4,3 +4,40 @@ expertMode = true
 
 [nix]
 channel = "stable-25_05"
+packages = ["cargo", "freetype", "lcms2", "libiconv", "libimagequant", "libjpeg", "libtiff", "libwebp", "libxcrypt", "openjpeg", "rustc", "tcl", "tk", "zlib"]
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "flask-bot"
+
+[[workflows.workflow]]
+name = "flask-bot"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python main.py"
+waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[[ports]]
+localPort = 40255
+externalPort = 3000
+
+[deployment]
+deploymentTarget = "vm"
+run = ["gunicorn", "wsgi:app", "--config", "gunicorn_config.py"]
