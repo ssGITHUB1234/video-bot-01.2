@@ -49,13 +49,12 @@ class VideoProcessor:
             caption = message.caption or message.caption_html or ""
             caption_entities = message.caption_entities if message.caption_entities else []
             
-            # Create video data
+            # Create video data (don't store thumbnail_bytes to avoid serialization issues)
             video_data = {
                 'id': video_id,
                 'file_id': video.file_id,
                 'file_unique_id': video.file_unique_id,
                 'thumbnail_file_id': thumbnail_file_id,
-                'thumbnail_bytes': thumbnail_bytes,  # Include downloaded thumbnail for re-upload
                 'duration': video.duration,
                 'width': video.width,
                 'height': video.height,
@@ -75,8 +74,11 @@ class VideoProcessor:
                 ]
             }
             
-            # Store video data
+            # Store video data (without thumbnail_bytes)
             self.storage.save_video(video_data)
+            
+            # Add thumbnail_bytes to return data for immediate use (not persisted)
+            video_data['thumbnail_bytes'] = thumbnail_bytes
             
             logger.info(f"Video processed successfully: {video_id}")
             return video_data

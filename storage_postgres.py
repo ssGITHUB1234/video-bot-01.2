@@ -43,12 +43,14 @@ class PostgreSQLStorage:
     # Video storage methods
     def save_video(self, video_data: Dict[str, Any]):
         """Save video data"""
+        import json
         with self.get_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute("""
                     INSERT INTO videos (id, file_id, file_unique_id, duration, width, height, 
-                                      file_size, thumbnail_file_id, message_id, channel_id)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                                      file_size, thumbnail_file_id, message_id, channel_id,
+                                      caption, caption_entities, mime_type, file_name)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                     ON CONFLICT (id) DO UPDATE SET
                         file_id = EXCLUDED.file_id,
                         file_unique_id = EXCLUDED.file_unique_id,
@@ -58,7 +60,11 @@ class PostgreSQLStorage:
                         file_size = EXCLUDED.file_size,
                         thumbnail_file_id = EXCLUDED.thumbnail_file_id,
                         message_id = EXCLUDED.message_id,
-                        channel_id = EXCLUDED.channel_id
+                        channel_id = EXCLUDED.channel_id,
+                        caption = EXCLUDED.caption,
+                        caption_entities = EXCLUDED.caption_entities,
+                        mime_type = EXCLUDED.mime_type,
+                        file_name = EXCLUDED.file_name
                 """, (
                     video_data.get('id'),
                     video_data.get('file_id'),
@@ -69,26 +75,51 @@ class PostgreSQLStorage:
                     video_data.get('file_size'),
                     video_data.get('thumbnail_file_id'),
                     video_data.get('message_id'),
-                    video_data.get('channel_id')
+                    video_data.get('channel_id'),
+                    video_data.get('caption'),
+                    json.dumps(video_data.get('caption_entities', [])),
+                    video_data.get('mime_type'),
+                    video_data.get('file_name')
                 ))
 
     def get_video(self, video_id: str) -> Dict[str, Any]:
         """Get video data by ID"""
+        import json
         with self.get_connection() as conn:
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                 cur.execute("SELECT * FROM videos WHERE id = %s", (video_id,))
                 result = cur.fetchone()
                 if result:
-                    return dict(result)
+                    video = dict(result)
+                    # Parse caption_entities from JSON string
+                    if video.get('caption_entities'):
+                        if isinstance(video['caption_entities'], str):
+                            video['caption_entities'] = json.loads(video['caption_entities'])
+                    # Convert created_at to uploaded_at for compatibility
+                    if video.get('created_at'):
+                        video['uploaded_at'] = video['created_at'].isoformat()
+                    return video
                 return {}
 
     def get_videos(self) -> Dict[str, Any]:
         """Get all videos"""
+        import json
         with self.get_connection() as conn:
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                 cur.execute("SELECT * FROM videos ORDER BY created_at DESC")
                 rows = cur.fetchall()
-                return {row['id']: dict(row) for row in rows}
+                videos = {}
+                for row in rows:
+                    video = dict(row)
+                    # Parse caption_entities from JSON string
+                    if video.get('caption_entities'):
+                        if isinstance(video['caption_entities'], str):
+                            video['caption_entities'] = json.loads(video['caption_entities'])
+                    # Convert created_at to uploaded_at for compatibility
+                    if video.get('created_at'):
+                        video['uploaded_at'] = video['created_at'].isoformat()
+                    videos[video['id']] = video
+                return videos
 
     def delete_video(self, video_id: str):
         """Delete video by ID"""

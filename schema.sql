@@ -23,7 +23,11 @@ CREATE TABLE IF NOT EXISTS videos (
     thumbnail_file_id VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     message_id BIGINT,
-    channel_id BIGINT
+    channel_id BIGINT,
+    caption TEXT,
+    caption_entities JSONB,
+    mime_type VARCHAR(100),
+    file_name VARCHAR(500)
 );
 
 -- Ads table
