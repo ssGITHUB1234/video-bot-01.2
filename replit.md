@@ -2,6 +2,13 @@
 This project is a Telegram video sharing bot designed to manage video content between private and public channels, integrating an advertisement system. Its core purpose is to process videos uploaded to a private channel, display video thumbnails with original captions to users in a public channel, and deliver the full video after users watch advertisements. The bot preserves all caption formatting (bold, italic, links, etc.) and manages automatic message cleanup. The bot aims to provide a robust and scalable solution for content distribution with monetization capabilities.
 
 # Recent Changes
+## November 11, 2025 - Broadcast Fix & Replit Import
+- **Broadcast Command Fix**: Fixed broadcast to send messages to ALL users regardless of username
+  - Added fallback to use dictionary key as user_id if field is missing
+  - Improved error tracking: now distinguishes between blocked users vs. other failures
+  - Enhanced feedback shows: Sent count, Blocked users count, and Failed count separately
+  - More robust logging for debugging broadcast issues
+
 ## November 11, 2025 - Replit Import & Ad System Update
 - **Replit Environment Setup**: Configured project to run in Replit environment
   - Installed all required Python dependencies (bcrypt, psycopg2-binary, gunicorn, Flask, etc.)

@@ -249,25 +249,39 @@ class TelegramBotHandler:
         
         success_count = 0
         failed_count = 0
+        blocked_count = 0
         
         for user_key, user_data in all_users.items():
             try:
                 target_user_id = user_data.get('user_id')
-                if target_user_id:
-                    await context.bot.send_message(
-                        chat_id=target_user_id,
-                        text=f"📢 Broadcast Message\n\n{broadcast_message}"
-                    )
-                    success_count += 1
-                    await asyncio.sleep(0.05)
+                if not target_user_id:
+                    try:
+                        target_user_id = int(user_key)
+                    except (ValueError, TypeError):
+                        logger.warning(f"Skipping invalid user_id: {user_key}")
+                        failed_count += 1
+                        continue
+                
+                await context.bot.send_message(
+                    chat_id=target_user_id,
+                    text=f"📢 Broadcast Message\n\n{broadcast_message}"
+                )
+                success_count += 1
+                await asyncio.sleep(0.05)
             except Exception as e:
-                failed_count += 1
-                logger.debug(f"Failed to send broadcast to user {user_key}: {e}")
+                error_msg = str(e).lower()
+                if "blocked" in error_msg or "forbidden" in error_msg:
+                    blocked_count += 1
+                    logger.info(f"User {user_key} has blocked the bot")
+                else:
+                    failed_count += 1
+                    logger.warning(f"Failed to send broadcast to user {user_key}: {e}")
         
         result_msg = (
             f"✅ Broadcast Complete!\n\n"
             f"📊 Results:\n"
             f"✅ Sent: {success_count}\n"
+            f"🚫 Blocked: {blocked_count}\n"
             f"❌ Failed: {failed_count}\n"
             f"📈 Total: {len(all_users)}"
         )
