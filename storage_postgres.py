@@ -149,7 +149,7 @@ class PostgreSQLStorage:
                     ad_data.get('type', 'text'),
                     ad_data.get('content'),
                     ad_data.get('url'),
-                    ad_data.get('duration', 15),
+                    ad_data.get('duration', 60),
                     ad_data.get('active', True),
                     ad_data.get('views', 0),
                     ad_data.get('last_shown')

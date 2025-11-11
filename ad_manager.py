@@ -105,7 +105,7 @@ class AdManager:
             ])
             
             # Message that explains the ad
-            ad_message = "🎯 Click the button below to watch the ad.\n\n⏳ Your video will be sent automatically after 15 seconds!"
+            ad_message = "🎯 Click the button below to watch the ad.\n\n⏳ Your video will be sent automatically after 1 minute!"
             
             # Send ad message with button
             try:
@@ -163,7 +163,7 @@ class AdManager:
                 'id': ad_id,
                 'type': ad_data.get('type', 'text'),
                 'content': ad_data['content'],
-                'duration': ad_data.get('duration', 5),
+                'duration': ad_data.get('duration', 60),
                 'active': ad_data.get('active', True),
                 'created_at': datetime.now().isoformat(),
                 'views': 0

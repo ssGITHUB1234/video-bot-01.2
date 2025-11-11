@@ -336,7 +336,7 @@ def manage_ads():
                     ad.update({
                         'type': ad_data.get('type', 'text'),
                         'content': ad_data['content'],
-                        'duration': ad_data.get('duration', 15),
+                        'duration': ad_data.get('duration', 60),
                         'active': ad_data.get('active', True)
                     })
                     storage.save_ad(ad)

@@ -198,7 +198,7 @@
 
         let adClicked = false;
         let countdownInterval = null;
-        let remainingTime = 15;
+        let remainingTime = 60;
 
         adButton.addEventListener('click', function() {
             if (adClicked) return;
@@ -310,7 +310,7 @@
                     adButton.disabled = false;
                     adButton.textContent = '🔄 Try Again';
                     adClicked = false;
-                    remainingTime = 15;
+                    remainingTime = 60;
                 }
             } catch (error) {
                 console.error('Error completing ad:', error);
@@ -321,7 +321,7 @@
                 adButton.disabled = false;
                 adButton.textContent = '🔄 Try Again';
                 adClicked = false;
-                remainingTime = 15;
+                remainingTime = 60;
             }
         }
     </script>
