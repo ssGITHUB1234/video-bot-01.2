@@ -35,7 +35,16 @@ class JSONStorage:
     def _read_file(self, key: str) -> Dict:
         try:
             with open(self.files[key], 'r') as f:
-                return json.load(f)
+                content = f.read().strip()
+                if not content:
+                    logger.warning(f"{key} file is empty, returning empty dict")
+                    return {}
+                return json.loads(content)
+        except json.JSONDecodeError as e:
+            logger.error(f"JSON decode error reading {key}: {e}")
+            logger.info(f"Attempting to recover {key} by reinitializing with empty dict")
+            self._write_file(key, {})
+            return {}
         except Exception as e:
             logger.error(f"Error reading {key}: {e}")
             return {}
