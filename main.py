@@ -10,7 +10,7 @@ import asyncio
 import threading
 import secrets
 import bcrypt
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify, send_file, redirect
 from bot_handler import TelegramBotHandler
 from storage import Storage
 
@@ -68,6 +68,57 @@ def home():
 def health():
     bot_status = 'running' if bot_handler and hasattr(bot_handler, 'application') else 'starting'
     return {'status': 'alive', 'bot': bot_status}
+
+@app.route('/ad-redirect')
+def ad_redirect():
+    """Redirect to ad page with user session setup"""
+    try:
+        import secrets
+        from ad_manager import AdManager
+        
+        video_id = request.args.get('video_id', '')
+        user_id = request.args.get('user_id', '')
+        
+        if not user_id:
+            # Get user_id from Telegram WebApp context
+            return """
+            <html>
+            <head>
+                <script src="https://telegram.org/js/telegram-web-app.js"></script>
+                <script>
+                    const tg = window.Telegram.WebApp;
+                    tg.ready();
+                    const userId = tg.initDataUnsafe?.user?.id;
+                    if (userId) {
+                        window.location.href = window.location.pathname + '?video_id=""" + video_id + """&user_id=' + userId;
+                    } else {
+                        document.body.innerHTML = '<div style="text-align:center;padding:40px;font-family:sans-serif;"><h2>❌ Error</h2><p>Please open this from Telegram</p></div>';
+                    }
+                </script>
+            </head>
+            <body><p style="text-align:center;padding:40px;">Loading...</p></body>
+            </html>
+            """
+        
+        # Get next ad
+        ad_manager = AdManager(storage)
+        ad = ad_manager.get_next_ad()
+        
+        if not ad:
+            return "<p style='text-align:center;padding:20px;'>No ads available</p>", 500
+        
+        # Generate session token
+        session_token = secrets.token_urlsafe(32)
+        
+        # Start ad session
+        storage.start_ad_session(int(user_id), ad['id'], video_id, session_token)
+        
+        # Redirect to actual ad page
+        return redirect(f'/ad?user_id={user_id}&ad_id={ad["id"]}&video_id={video_id}&token={session_token}')
+        
+    except Exception as e:
+        logger.error(f"Error in ad redirect: {e}")
+        return f"<p style='text-align:center;padding:20px;'>Error: {e}</p>", 500
 
 @app.route('/ad')
 def ad_page():

@@ -312,9 +312,24 @@ class TelegramBotHandler:
                 logger.error("Failed to process video")
                 return
             
-            # Create inline keyboard with Watch Now button
+            # Create inline keyboard with Watch Now button that directly opens ad WebApp
+            import os
+            # Get domain for WebApp URL
+            webhook_url = os.environ.get('WEBHOOK_URL')
+            if webhook_url:
+                base_url = webhook_url.rstrip('/')
+            else:
+                domains = os.environ.get('REPLIT_DOMAINS', 'localhost:5000')
+                domain = domains.split(',')[0].strip() if ',' in domains else domains
+                protocol = 'https://' if 'replit.dev' in domain else 'http://'
+                base_url = f"{protocol}{domain}"
+            
+            # Create WebApp URL for direct ad access (user_id will be from callback)
+            from telegram import WebAppInfo
+            webapp_url = f"{base_url}/ad-redirect?video_id={video_data['id']}"
+            
             keyboard = InlineKeyboardMarkup([
-                [InlineKeyboardButton("🎬 Watch Now", callback_data=f"watch_{video_data['id']}")]
+                [InlineKeyboardButton("🎬 Watch Now", web_app=WebAppInfo(url=webapp_url))]
             ])
             
             # Get original caption (preserve exact formatting)
@@ -502,9 +517,24 @@ class TelegramBotHandler:
                 logger.error("Failed to process channel post video")
                 return
             
-            # Create inline keyboard with Watch Now button
+            # Create inline keyboard with Watch Now button that directly opens ad WebApp
+            import os
+            # Get domain for WebApp URL
+            webhook_url = os.environ.get('WEBHOOK_URL')
+            if webhook_url:
+                base_url = webhook_url.rstrip('/')
+            else:
+                domains = os.environ.get('REPLIT_DOMAINS', 'localhost:5000')
+                domain = domains.split(',')[0].strip() if ',' in domains else domains
+                protocol = 'https://' if 'replit.dev' in domain else 'http://'
+                base_url = f"{protocol}{domain}"
+            
+            # Create WebApp URL for direct ad access
+            from telegram import WebAppInfo
+            webapp_url = f"{base_url}/ad-redirect?video_id={video_data['id']}"
+            
             keyboard = InlineKeyboardMarkup([
-                [InlineKeyboardButton("🎬 Watch Now", callback_data=f"watch_{video_data['id']}")]
+                [InlineKeyboardButton("🎬 Watch Now", web_app=WebAppInfo(url=webapp_url))]
             ])
             
             # Get original caption (preserve exact formatting)
