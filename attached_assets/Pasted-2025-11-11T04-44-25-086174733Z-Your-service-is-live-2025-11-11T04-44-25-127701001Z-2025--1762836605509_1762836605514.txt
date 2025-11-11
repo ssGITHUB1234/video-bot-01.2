@@ -1,0 +1,50 @@
+2025-11-11T04:44:25.086174733Z ==> Your service is live 🎉
+2025-11-11T04:44:25.127701001Z ==> 
+2025-11-11T04:44:25.170696347Z ==> ///////////////////////////////////////////////////////////
+2025-11-11T04:44:25.207525614Z ==> 
+2025-11-11T04:44:25.247396831Z ==> Available at your primary URL https://video-bot-01-2.onrender.com
+2025-11-11T04:44:25.285377578Z ==> 
+2025-11-11T04:44:25.330549065Z ==> ///////////////////////////////////////////////////////////
+2025-11-11T04:44:53.006652466Z 2025-11-11 04:44:53,006 - bot_handler - INFO -    Has document: False
+2025-11-11T04:44:53.006687329Z 2025-11-11 04:44:53,006 - bot_handler - INFO -    Has photo: True
+2025-11-11T04:44:53.006735703Z 2025-11-11 04:44:53,006 - bot_handler - INFO -    Has animation: False
+2025-11-11T04:44:53.006894794Z 2025-11-11 04:44:53,006 - bot_handler - INFO - New channel post video uploaded: BAACAgUAAyEFAATDRGiTAAMRaRKu91__Td_aqjADU8n9shoCtwgAAvwXAAL1-9FWG3sgBN5TrBw2BA
+2025-11-11T04:44:53.007740796Z 127.0.0.1 - - [11/Nov/2025:04:44:53 +0000] "POST /webhook HTTP/1.1" 200 12 "-" "-"
+2025-11-11T04:44:53.49275299Z 2025-11-11 04:44:53,492 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8542920126:AAGhPeLnbGw6l2C741bxJ_xGBqpTSmdlshM/getFile "HTTP/1.1 200 OK"
+2025-11-11T04:44:53.811985402Z 2025-11-11 04:44:53,811 - httpx - INFO - HTTP Request: GET https://api.telegram.org/file/bot8542920126%3AAAGhPeLnbGw6l2C741bxJ_xGBqpTSmdlshM/thumbnails/file_2.jpg "HTTP/1.1 200 OK"
+2025-11-11T04:44:53.812477298Z 2025-11-11 04:44:53,812 - video_processor - INFO - Thumbnail downloaded for video b112c339 (14561 bytes)
+2025-11-11T04:44:53.819365191Z 2025-11-11 04:44:53,819 - video_processor - INFO - Video processed successfully: b112c339
+2025-11-11T04:44:54.352998471Z 2025-11-11 04:44:54,352 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8542920126:AAGhPeLnbGw6l2C741bxJ_xGBqpTSmdlshM/sendPhoto "HTTP/1.1 400 Bad Request"
+2025-11-11T04:44:54.353436132Z 2025-11-11 04:44:54,353 - bot_handler - ERROR - Failed to send thumbnail to public channel: Button_type_invalid
+2025-11-11T04:44:54.721421381Z 2025-11-11 04:44:54,721 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8542920126:AAGhPeLnbGw6l2C741bxJ_xGBqpTSmdlshM/sendMessage "HTTP/1.1 400 Bad Request"
+2025-11-11T04:44:54.722107571Z 2025-11-11 04:44:54,721 - bot_handler - ERROR - Failed to send fallback message: Button_type_invalid
+2025-11-11T04:44:54.722246281Z 2025-11-11 04:44:54,722 - bot_handler - INFO - Channel post video posted to public channel: b112c339
+2025-11-11T04:44:54.7223753Z 2025-11-11 04:44:54,722 - bot_handler - INFO - Successfully processed update: 438656282
+2025-11-11T04:44:54.722387532Z 2025-11-11 04:44:54,722 - main - INFO - Event loop finished processing update 438656282
+2025-11-11T04:44:54.722527502Z 2025-11-11 04:44:54,722 - main - INFO - ✅ Update 438656282 processed successfully
+2025-11-11T04:45:18.170140403Z 2025-11-11 04:45:18,169 - main - INFO - Webhook called - bot_handler exists: True, loop exists: True, loop running: True
+2025-11-11T04:45:18.170306655Z 2025-11-11 04:45:18,170 - main - INFO - Received webhook update: 438656283
+2025-11-11T04:45:18.170364619Z 2025-11-11 04:45:18,170 - main - INFO - Update data keys: ['update_id', 'channel_post']
+2025-11-11T04:45:18.170503239Z 2025-11-11 04:45:18,170 - main - INFO - Update 438656283 submitted to event loop
+2025-11-11T04:45:18.171109583Z 2025-11-11 04:45:18,170 - main - INFO - Event loop processing update 438656283
+2025-11-11T04:45:18.171301887Z 127.0.0.1 - - [11/Nov/2025:04:45:18 +0000] "POST /webhook HTTP/1.1" 200 12 "-" "-"
+2025-11-11T04:45:18.172123297Z 2025-11-11 04:45:18,172 - bot_handler - INFO - 📺 CHANNEL_POST DEBUG - Chat ID: -1003276040339, Private Channel ID: -1003276040339
+2025-11-11T04:45:18.172195533Z 2025-11-11 04:45:18,172 - bot_handler - INFO -    Has video: True
+2025-11-11T04:45:18.172201363Z 2025-11-11 04:45:18,172 - bot_handler - INFO -    Has document: False
+2025-11-11T04:45:18.172246216Z 2025-11-11 04:45:18,172 - bot_handler - INFO -    Has photo: True
+2025-11-11T04:45:18.172335343Z 2025-11-11 04:45:18,172 - bot_handler - INFO -    Has animation: False
+2025-11-11T04:45:18.172425749Z 2025-11-11 04:45:18,172 - bot_handler - INFO - New channel post video uploaded: BAACAgUAAyEFAATDRGiTAAMRaRKu91__Td_aqjADU8n9shoCtwgAAvwXAAL1-9FWG3sgBN5TrBw2BA
+2025-11-11T04:45:18.656257927Z 2025-11-11 04:45:18,656 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8542920126:AAGhPeLnbGw6l2C741bxJ_xGBqpTSmdlshM/getFile "HTTP/1.1 200 OK"
+2025-11-11T04:45:18.976000567Z 2025-11-11 04:45:18,975 - httpx - INFO - HTTP Request: GET https://api.telegram.org/file/bot8542920126%3AAAGhPeLnbGw6l2C741bxJ_xGBqpTSmdlshM/thumbnails/file_2.jpg "HTTP/1.1 200 OK"
+2025-11-11T04:45:18.976442059Z 2025-11-11 04:45:18,976 - video_processor - INFO - Thumbnail downloaded for video bd437c03 (14561 bytes)
+2025-11-11T04:45:18.976887691Z 2025-11-11 04:45:18,976 - video_processor - INFO - Video processed successfully: bd437c03
+2025-11-11T04:45:19.559027309Z 2025-11-11 04:45:19,558 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8542920126:AAGhPeLnbGw6l2C741bxJ_xGBqpTSmdlshM/sendPhoto "HTTP/1.1 400 Bad Request"
+2025-11-11T04:45:19.559629223Z 2025-11-11 04:45:19,559 - bot_handler - ERROR - Failed to send thumbnail to public channel: Button_type_invalid
+2025-11-11T04:45:19.97173542Z 2025-11-11 04:45:19,971 - httpx - INFO - HTTP Request: POST https://api.telegram.org/bot8542920126:AAGhPeLnbGw6l2C741bxJ_xGBqpTSmdlshM/sendMessage "HTTP/1.1 400 Bad Request"
+2025-11-11T04:45:19.97215253Z 2025-11-11 04:45:19,972 - bot_handler - ERROR - Failed to send fallback message: Button_type_invalid
+2025-11-11T04:45:19.972213854Z 2025-11-11 04:45:19,972 - bot_handler - INFO - Channel post video posted to public channel: bd437c03
+2025-11-11T04:45:19.972311142Z 2025-11-11 04:45:19,972 - bot_handler - INFO - Successfully processed update: 438656283
+2025-11-11T04:45:19.972324943Z 2025-11-11 04:45:19,972 - main - INFO - Event loop finished processing update 438656283
+2025-11-11T04:45:19.972445911Z 2025-11-11 04:45:19,972 - main - INFO - ✅ Update 438656283 processed successfully
+2025-11-11T04:49:26.533992774Z ==> Detected service running on port 10000
+2025-11-11T04:49:26.728954229Z ==> Docs on specifying a port: https://render.com/docs/web-services#port-binding

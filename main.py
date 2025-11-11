@@ -71,54 +71,88 @@ def health():
 
 @app.route('/ad-redirect')
 def ad_redirect():
-    """Redirect to ad page with user session setup"""
+    """Redirect to ad page - sends user to bot for authentication"""
     try:
-        import secrets
-        from ad_manager import AdManager
-        
         video_id = request.args.get('video_id', '')
-        user_id = request.args.get('user_id', '')
         
-        if not user_id:
-            # Get user_id from Telegram WebApp context
-            return """
-            <html>
-            <head>
-                <script src="https://telegram.org/js/telegram-web-app.js"></script>
-                <script>
-                    const tg = window.Telegram.WebApp;
-                    tg.ready();
-                    const userId = tg.initDataUnsafe?.user?.id;
-                    if (userId) {
-                        window.location.href = window.location.pathname + '?video_id=""" + video_id + """&user_id=' + userId;
-                    } else {
-                        document.body.innerHTML = '<div style="text-align:center;padding:40px;font-family:sans-serif;"><h2>❌ Error</h2><p>Please open this from Telegram</p></div>';
-                    }
-                </script>
-            </head>
-            <body><p style="text-align:center;padding:40px;">Loading...</p></body>
-            </html>
-            """
+        if not video_id:
+            return "<p style='text-align:center;padding:40px;font-family:sans-serif;'>Invalid video ID</p>", 400
         
-        # Get next ad
-        ad_manager = AdManager(storage)
-        ad = ad_manager.get_next_ad()
+        # Get bot username from environment
+        bot_token = os.environ.get('BOT_TOKEN', '')
+        if not bot_token:
+            return "<p style='text-align:center;padding:40px;font-family:sans-serif;'>Bot not configured</p>", 500
         
-        if not ad:
-            return "<p style='text-align:center;padding:20px;'>No ads available</p>", 500
+        # Extract bot username from token (format: botID:token)
+        # We'll use a deep link to open the bot with the video_id as start parameter
+        bot_username = os.environ.get('BOT_USERNAME', 'your_bot')
         
-        # Generate session token
-        session_token = secrets.token_urlsafe(32)
+        # Create Telegram deep link that will open the bot
+        deep_link = f"https://t.me/{bot_username}?start=watch_{video_id}"
         
-        # Start ad session
-        storage.start_ad_session(int(user_id), ad['id'], video_id, session_token)
-        
-        # Redirect to actual ad page
-        return redirect(f'/ad?user_id={user_id}&ad_id={ad["id"]}&video_id={video_id}&token={session_token}')
+        # Return HTML page that redirects to Telegram bot
+        return f"""
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Watch Video</title>
+            <style>
+                body {{
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    min-height: 100vh;
+                    margin: 0;
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                }}
+                .container {{
+                    background: white;
+                    padding: 40px;
+                    border-radius: 20px;
+                    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+                    text-align: center;
+                    max-width: 400px;
+                }}
+                h1 {{ color: #333; margin-bottom: 20px; }}
+                p {{ color: #666; line-height: 1.6; margin-bottom: 30px; }}
+                .btn {{
+                    display: inline-block;
+                    background: #0088cc;
+                    color: white;
+                    padding: 15px 40px;
+                    border-radius: 25px;
+                    text-decoration: none;
+                    font-size: 16px;
+                    font-weight: bold;
+                    transition: transform 0.2s;
+                }}
+                .btn:hover {{ transform: scale(1.05); }}
+                .icon {{ font-size: 48px; margin-bottom: 20px; }}
+            </style>
+            <script>
+                // Auto-redirect after 2 seconds
+                setTimeout(function() {{
+                    window.location.href = '{deep_link}';
+                }}, 2000);
+            </script>
+        </head>
+        <body>
+            <div class="container">
+                <div class="icon">🎬</div>
+                <h1>Watch Video</h1>
+                <p>Click the button below to open the bot and watch your video!</p>
+                <a href="{deep_link}" class="btn">Open in Telegram</a>
+                <p style="margin-top: 20px; font-size: 14px; color: #999;">Redirecting automatically...</p>
+            </div>
+        </body>
+        </html>
+        """
         
     except Exception as e:
         logger.error(f"Error in ad redirect: {e}")
-        return f"<p style='text-align:center;padding:20px;'>Error: {e}</p>", 500
+        return f"<p style='text-align:center;padding:40px;font-family:sans-serif;'>Error: {e}</p>", 500
 
 @app.route('/ad')
 def ad_page():

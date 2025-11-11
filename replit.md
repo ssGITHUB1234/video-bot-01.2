@@ -2,6 +2,16 @@
 This project is a Telegram video sharing bot designed to manage video content between private and public channels, integrating an advertisement system. Its core purpose is to process videos uploaded to a private channel, display video thumbnails with original captions to users in a public channel, and deliver the full video after users watch advertisements. The bot preserves all caption formatting (bold, italic, links, etc.) and manages automatic message cleanup. The bot aims to provide a robust and scalable solution for content distribution with monetization capabilities.
 
 # Recent Changes
+## November 11, 2025 - Simplified User Flow (URL-Based)
+- **Direct Watch Flow**: Streamlined user experience from channel to ad viewing
+  - Changed "Watch Now" buttons in public channel to use URL buttons (Telegram channels don't support WebApp buttons)
+  - Created `/ad-redirect` endpoint that shows attractive landing page and redirects to bot via deep link
+  - Updated `/start` command to handle `watch_{video_id}` parameters from deep links
+  - Added `send_ad_webapp()` method to send WebApp button in private bot message
+  - **New Flow**: Channel post → URL click → Landing page → Opens bot → Bot sends WebApp button → Ad plays → Video delivered
+  - Ad duration: 60 seconds (verified across all components)
+  - Fixed "Button_type_invalid" error by switching from WebApp to URL buttons in channels
+
 ## November 11, 2025 - Broadcast Fix & Replit Import
 - **Broadcast Command Fix**: Fixed broadcast to send messages to ALL users regardless of username
   - Added fallback to use dictionary key as user_id if field is missing

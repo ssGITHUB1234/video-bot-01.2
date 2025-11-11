@@ -127,6 +127,16 @@ class TelegramBotHandler:
             'first_name': update.effective_user.first_name
         })
         
+        # Check if user clicked a video link (start parameter: watch_{video_id})
+        if context.args and len(context.args) > 0:
+            start_param = context.args[0]
+            if start_param.startswith('watch_'):
+                video_id = start_param.replace('watch_', '')
+                # Send ad WebApp button for this video
+                await self.send_ad_webapp(update, context, video_id)
+                return
+        
+        # Regular welcome message
         welcome_msg = (
             "🔞 Welcome to the YPV Bot!\n\n"
             "Click 'Watch Now' buttons on videos in our public channel to receive videos in your DM.\n"
@@ -137,6 +147,54 @@ class TelegramBotHandler:
         
         # Send welcome message and schedule deletion
         message = await update.message.reply_text(welcome_msg)
+        await self.message_manager.track_and_schedule_deletion(
+            context, user_id, message.message_id, delete_previous=True
+        )
+
+    async def send_ad_webapp(self, update: Update, context: ContextTypes.DEFAULT_TYPE, video_id: str):
+        """Send WebApp button to watch ad for a specific video"""
+        import secrets
+        from telegram import WebAppInfo
+        
+        user_id = update.effective_user.id
+        
+        # Get next ad
+        ad = self.ad_manager.get_next_ad()
+        if not ad:
+            await update.message.reply_text("❌ No ads available. Please try again later.")
+            return
+        
+        # Generate session token
+        session_token = secrets.token_urlsafe(32)
+        
+        # Start ad session
+        self.storage.start_ad_session(user_id, ad['id'], video_id, session_token)
+        
+        # Get base URL for WebApp
+        webhook_url = os.environ.get('WEBHOOK_URL')
+        if webhook_url:
+            base_url = webhook_url.rstrip('/')
+        else:
+            domains = os.environ.get('REPLIT_DOMAINS', 'localhost:5000')
+            domain = domains.split(',')[0].strip() if ',' in domains else domains
+            protocol = 'https://' if 'replit.dev' in domain else 'http://'
+            base_url = f"{protocol}{domain}"
+        
+        # Create WebApp button
+        webapp_url = f"{base_url}/ad?user_id={user_id}&ad_id={ad['id']}&video_id={video_id}&token={session_token}"
+        keyboard = InlineKeyboardMarkup([
+            [InlineKeyboardButton("▶️ Watch Ad & Get Video", web_app=WebAppInfo(url=webapp_url))]
+        ])
+        
+        # Send message with WebApp button
+        message = await update.message.reply_text(
+            "🎬 <b>Video Ready!</b>\n\n"
+            "Click the button below to watch a 60-second ad and receive your video.",
+            parse_mode='HTML',
+            reply_markup=keyboard
+        )
+        
+        # Track message for auto-deletion
         await self.message_manager.track_and_schedule_deletion(
             context, user_id, message.message_id, delete_previous=True
         )
@@ -312,9 +370,9 @@ class TelegramBotHandler:
                 logger.error("Failed to process video")
                 return
             
-            # Create inline keyboard with Watch Now button that directly opens ad WebApp
+            # Create inline keyboard with Watch Now button (URL opens ad page directly)
             import os
-            # Get domain for WebApp URL
+            # Get domain for ad URL
             webhook_url = os.environ.get('WEBHOOK_URL')
             if webhook_url:
                 base_url = webhook_url.rstrip('/')
@@ -324,12 +382,11 @@ class TelegramBotHandler:
                 protocol = 'https://' if 'replit.dev' in domain else 'http://'
                 base_url = f"{protocol}{domain}"
             
-            # Create WebApp URL for direct ad access (user_id will be from callback)
-            from telegram import WebAppInfo
-            webapp_url = f"{base_url}/ad-redirect?video_id={video_data['id']}"
+            # Create URL for direct ad access
+            ad_url = f"{base_url}/ad-redirect?video_id={video_data['id']}"
             
             keyboard = InlineKeyboardMarkup([
-                [InlineKeyboardButton("🎬 Watch Now", web_app=WebAppInfo(url=webapp_url))]
+                [InlineKeyboardButton("🎬 Watch Now", url=ad_url)]
             ])
             
             # Get original caption (preserve exact formatting)
@@ -517,9 +574,9 @@ class TelegramBotHandler:
                 logger.error("Failed to process channel post video")
                 return
             
-            # Create inline keyboard with Watch Now button that directly opens ad WebApp
+            # Create inline keyboard with Watch Now button (URL opens ad page directly)
             import os
-            # Get domain for WebApp URL
+            # Get domain for ad URL
             webhook_url = os.environ.get('WEBHOOK_URL')
             if webhook_url:
                 base_url = webhook_url.rstrip('/')
@@ -529,12 +586,11 @@ class TelegramBotHandler:
                 protocol = 'https://' if 'replit.dev' in domain else 'http://'
                 base_url = f"{protocol}{domain}"
             
-            # Create WebApp URL for direct ad access
-            from telegram import WebAppInfo
-            webapp_url = f"{base_url}/ad-redirect?video_id={video_data['id']}"
+            # Create URL for direct ad access
+            ad_url = f"{base_url}/ad-redirect?video_id={video_data['id']}"
             
             keyboard = InlineKeyboardMarkup([
-                [InlineKeyboardButton("🎬 Watch Now", web_app=WebAppInfo(url=webapp_url))]
+                [InlineKeyboardButton("🎬 Watch Now", url=ad_url)]
             ])
             
             # Get original caption (preserve exact formatting)
